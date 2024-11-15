@@ -42,9 +42,11 @@ class RosNode(NodeBase):
 
         self.exi: PinBase = self.createInputPin("In", "ExecPin", callback=self.start)
         self.exo: PinBase = self.createOutputPin("Out", "ExecPin")
-        self.msg_pin: PinBase = self.createInputPin(
-            type(self.ros_msg).__name__, "StringPin", "{}"
-        )
+
+        if hasattr(self, "ros_msg"):
+            self.msg_pin: PinBase = self.createInputPin(
+                type(self.ros_msg).__name__, "StringPin", "{}"
+            )
 
         self.active = False
         self.finished = False
@@ -54,9 +56,26 @@ class RosNode(NodeBase):
     def category() -> str:
         return "Nodes"
 
+    def fix_bytes_in_dict(self, msg_dict: dict) -> dict:
+        """
+        The set_message.set_message_fields() method cannot handle bytes well.
+        This method sets bytes correctly, in the first layer of the dict.
+        This method needs to be expanded for handling bytes in sub-dicts of the dict.
+        """
+        for key, item in msg_dict.items():
+            if isinstance(item, str):
+                str_byte = str.encode(item)
+                if str_byte:
+                    msg_dict[key] = str_byte
+        return msg_dict
+
     def get_message(self) -> object:
+        if not hasattr(self, "msg_pin"):
+            logging.error("No ros_msg was set. Exit.")
+            return
         msg_json = self.msg_pin.getData()
         msg_dict = json.loads(msg_json)
+        msg_dict = self.fix_bytes_in_dict(msg_dict)
         set_message.set_message_fields(self.ros_msg, msg_dict)
         return self.ros_msg
 

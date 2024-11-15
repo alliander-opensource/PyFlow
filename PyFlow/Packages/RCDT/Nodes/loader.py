@@ -14,6 +14,13 @@ class PoseStampedMsg(RosMessage):
         messages.PoseStampedMsg(self)
 
 
+class CollisionObjectMsg(RosMessage):
+    def __init__(self, name: str):
+        super().__init__(name)
+        reload(messages)
+        messages.CollisionObjectMsg(self)
+
+
 class RvizMark(RosNode):
     def __init__(self, name: str):
         reload(nodes)
@@ -25,6 +32,20 @@ class MoveitMove(RosNode):
     def __init__(self, name: str):
         reload(nodes)
         nodes.MoveitMove(self)
+        super().__init__(name)
+
+
+class MoveitAddObject(RosNode):
+    def __init__(self, name: str):
+        reload(nodes)
+        nodes.MoveitAddObject(self)
+        super().__init__(name)
+
+
+class MoveitClearObjects(RosNode):
+    def __init__(self, name: str):
+        reload(nodes)
+        nodes.MoveitClearObjects(self)
         super().__init__(name)
 
 
