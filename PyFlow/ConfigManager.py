@@ -31,7 +31,7 @@ class ConfigManager(object):
 
     CONFIGS_STORAGE = {}
 
-    CONFIGS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "Configs")
+    CONFIGS_DIR = os.path.join(os.path.abspath(os.environ["HOME"]), ".config", "pyflow")
     INPUT_CONFIG_PATH = os.path.join(CONFIGS_DIR, "input.json")
 
     def __init__(self, *args, **kwargs):
